@@ -1,7 +1,7 @@
 [
-  {"name": "Africa"},
-  {"name": "America"},
-  {"name": "Asia"},
-  {"name": "Europa"},
-  {"name": "Oceania"}
+  { "label": "Africa", "region": "africa" },
+  { "label": "America", "region": "americas" },
+  { "label": "Asia", "region": "asia" },
+  { "label": "Europa", "region": "europe" },
+  { "label": "Oceania", "region": "oceania" }
 ]

@@ -1,4 +1,5 @@
-import { Box, Paper } from "@mui/material"
+import { useContext } from "react";
+import CountryContext from "../context/CountryContext";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
@@ -9,11 +10,10 @@ const useStyles = createUseStyles({
 })
 
 export default function Flag() {
+  const { country } = useContext(CountryContext);
   const classes = useStyles();
 
-  return (
-    <Paper>
-      <img className={classes.img} alt="flag" src="https://flagcdn.com/mx.svg" />
-    </Paper>
-  )
+  if (!country.flag) return <></>
+
+  return <img className={classes.img} alt="flag" src={country.flag} />
 }

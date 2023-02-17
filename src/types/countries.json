@@ -1,3 +1,4 @@
 [
-  {"label": "Mexico", "id": 52}
+  { "label": "Mexico", "code": "MX" },
+  { "label": "Colombia", "code": "CO" }
 ]
