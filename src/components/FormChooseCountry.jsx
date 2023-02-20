@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import CountryContext from '../context/CountryContext';
-import { getCountriesByRegion, getCountryData } from '../api';
+import * as API from '../api';
 
 // MUI Components
 import {
@@ -15,26 +15,40 @@ import {
 
 // Data
 import regions from '../types/regions.json';
-import countries from '../types/countries.json'
 
 export default function ChooseCountry() {
-  const [ selectedRegion, setSelectedRegion] = useState('');
-  const [ selectedCountry, setSelectedCountry ] = useState('');
+  const [ selectedRegion, setSelectedRegion] = useState(regions[0].region);
+  const [ selectedCountry, setSelectedCountry ] = useState(null);
   const [ showCountryData, setShowCountryData ] = useState(false);
+  const [ countries, setCountries ] = useState([]);
   const { setCountry } = useContext(CountryContext);
 
   useEffect(() => {
-    const getData = async () => {
-      const response = await getCountryData(selectedCountry);
+    const getCountriesByRegion = async () => {
+      const response = await API.getCountriesByRegion(selectedRegion);
+      if (response.success == true) {
+        console.log(response.data);
+        setCountries(response.data);
+      } else {
+        console.error('Something happened wrong with getCountriesByRegion()')
+      }
+    }
+
+    getCountriesByRegion();
+  }, [selectedRegion])
+
+  useEffect(() => {
+    const getCountry = async () => {
+      const response = await API.getCountry(selectedCountry);
       if (response.success == true) {
         setCountry(response.data);
       } else {
-        console.error('Something happened wrong!')
+        console.error('Something happened wrong with getCountry(')
       }
       setShowCountryData(false);
     };
 
-    if (showCountryData) getData();
+    if (showCountryData) getCountry();
 
   }, [ showCountryData ])
 
@@ -64,15 +78,15 @@ export default function ChooseCountry() {
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel id="country-label">Region</InputLabel>
+                <InputLabel id="country-label">Country</InputLabel>
                 <Select
                   labelId='country-label'
                   id="country-select"
                   value={ selectedCountry }
-                  label="Region"
+                  label="Country"
                   onChange={ (e) => setSelectedCountry(e.target.value) }
                 >
-                  { countries.map(({ label, code }) => <MenuItem key={ code } value={ code }>{ label }</MenuItem>) }
+                  { countries.map(({ name, code }) => <MenuItem key={ code } value={ code }>{ name }</MenuItem>) }
                 </Select>
               </FormControl>
             </Grid>

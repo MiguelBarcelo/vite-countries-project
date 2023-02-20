@@ -14,8 +14,8 @@ const getCountriesByRegion = async (region) => {
   try {
     const response = await client.get(`/region/${region}`);
     dataCountries.data = response.data.map(country => ({
-      region,
-      label: country.name.official
+      name: country.name.official,
+      code: country.cca3,
     }));
     dataCountries.success = true;
   } catch (error) {
@@ -30,7 +30,7 @@ const getCountriesByRegion = async (region) => {
  * @param {String} code
  * @returns
  */
-const getCountryData = async (code) => {
+const getCountry = async (code) => {
   let countryData = { data: {}, success: false };
 
   try {
@@ -50,4 +50,4 @@ const getCountryData = async (code) => {
   return countryData;
 }
 
-export { getCountriesByRegion, getCountryData };
+export { getCountriesByRegion, getCountry };
