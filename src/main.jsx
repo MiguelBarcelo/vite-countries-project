@@ -1,9 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom';
 import App from './App'
-
-import CssBaseline from '@mui/material/CssBaseline';
+// Context
+import CountryProvider from './context/CountryProvider';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -14,9 +13,8 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <CssBaseline />
-    <BrowserRouter>
+    <CountryProvider>
       <App />
-    </BrowserRouter>
+    </CountryProvider>
   </React.StrictMode>,
 )

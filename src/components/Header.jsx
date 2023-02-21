@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { createUseStyles } from "react-jss";
 import {
@@ -14,6 +14,7 @@ import {
   Search as SearchIcon,
   Menu as MenuIcon
 } from '@mui/icons-material'
+import CountryContext from '../context/CountryContext';
 
 const useStyles = createUseStyles({
   root: {
@@ -64,11 +65,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Header() {
-  const [darkMode, setDarkMode] = useState(false);
+  const { darkTheme, setDarkTheme } = useContext(CountryContext);
   const classes = useStyles()
 
   return (
-    
       <AppBar position='static' className={classes.root}>
         <Toolbar>
           <IconButton
@@ -92,8 +92,8 @@ export default function Header() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </Search>
-          <IconButton aria-label='modo'>
-            {darkMode ? <ModeNightIcon /> : <WbSunnyIcon />}
+          <IconButton aria-label='modo' onClick={() => setDarkTheme(prevState => !prevState)}>
+            {darkTheme ? <ModeNightIcon /> : <WbSunnyIcon />}
           </IconButton>
         </Toolbar>
       </AppBar>

@@ -27,7 +27,6 @@ export default function ChooseCountry() {
     const getCountriesByRegion = async () => {
       const response = await API.getCountriesByRegion(selectedRegion);
       if (response.success == true) {
-        console.log(response.data);
         setCountries(response.data);
       } else {
         console.error('Something happened wrong with getCountriesByRegion()')
@@ -54,7 +53,6 @@ export default function ChooseCountry() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('handleSubmit...')
     setShowCountryData(true);
   }
 
