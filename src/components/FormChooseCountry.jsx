@@ -18,7 +18,7 @@ import regions from '../types/regions.json';
 
 export default function ChooseCountry() {
   const [ selectedRegion, setSelectedRegion] = useState(regions[0].region);
-  const [ selectedCountry, setSelectedCountry ] = useState(null);
+  const [ selectedCountry, setSelectedCountry ] = useState('');
   const [ showCountryData, setShowCountryData ] = useState(false);
   const [ countries, setCountries ] = useState([]);
   const { setCountry } = useContext(CountryContext);

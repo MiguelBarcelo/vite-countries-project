@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useEffect, useContext } from 'react';
 // Components
 import Header from './components/Header';
 import Home from './pages/Home';

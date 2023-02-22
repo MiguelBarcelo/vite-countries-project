@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { createUseStyles } from "react-jss";
 import {
@@ -68,6 +68,11 @@ export default function Header() {
   const { darkTheme, setDarkTheme } = useContext(CountryContext);
   const classes = useStyles()
 
+  const handleThemeChange = () => {
+    setDarkTheme(!darkTheme);
+    localStorage.setItem('darkTheme', !darkTheme);
+  }
+
   return (
       <AppBar position='static' className={classes.root}>
         <Toolbar>
@@ -92,7 +97,7 @@ export default function Header() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </Search>
-          <IconButton aria-label='modo' onClick={() => setDarkTheme(prevState => !prevState)}>
+          <IconButton sx={{ml : 2}} aria-label='modo' onClick={handleThemeChange}>
             {darkTheme ? <ModeNightIcon /> : <WbSunnyIcon />}
           </IconButton>
         </Toolbar>
