@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { createUseStyles } from "react-jss";
 import {
@@ -6,7 +6,10 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  InputBase
+  InputBase,
+  Autocomplete,
+  CircularProgress,
+  TextField
 } from '@mui/material';
 import {
   WbSunny as WbSunnyIcon,
@@ -15,6 +18,9 @@ import {
   Menu as MenuIcon
 } from '@mui/icons-material'
 import CountryContext from '../context/CountryContext';
+import { throttle } from '../utils/throttle';
+import { debounce } from '../utils/debounce';
+import * as API from '../api';
 
 const useStyles = createUseStyles({
   root: {
@@ -67,6 +73,34 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function Header() {
   const { darkTheme, setDarkTheme } = useContext(CountryContext);
   const classes = useStyles()
+  const [ value, setValue ] = useState(null);
+  const [ inputValue, setInputValue] = useState('')
+  const [ open, setOpen ] = useState(false);
+  const [ options, setOptions ] = useState([]);
+  const loading = open && options.length === 0;
+
+  useEffect(() => {
+    const getCountriesByRegion = async () => {
+      const response = await API.searchCountries(inputValue);
+      if (response.success === true) {
+        setOptions(response.data);
+      } else {
+        console.error('Something happened wrong with getCountriesByRegion()')
+      }
+    }
+    if (inputValue != "") 
+      getCountriesByRegion();
+    else
+      setOptions([])
+  }, [inputValue]);
+
+  const inputChangeHandler = (event, newInputValue) => {
+    setInputValue(newInputValue)
+  }
+
+  const debouncedInputChangeHandler = useCallback(
+    debounce(inputChangeHandler, 400)
+  , [])
 
   const handleThemeChange = () => {
     setDarkTheme(!darkTheme);
@@ -76,6 +110,7 @@ export default function Header() {
   return (
       <AppBar position='static' className={classes.root}>
         <Toolbar>
+
           <IconButton
             size="large"
             edge="start"
@@ -85,18 +120,41 @@ export default function Header() {
           >
             <MenuIcon />
           </IconButton>
+
           <Typography variant="h6" component="div" sx={{ flexGrow: 1}}>
             Countries
           </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+
+          <Autocomplete
+            id="asynchronous-demo"
+            sx={{ width: 300 }}
+            isOptionEqualToValue={ (option, value) => option.name === value.name }
+            getOptionLabel={ (option) => option.name }
+            filterOptions={(x) => x}
+            options={options}
+            autoComplete
+            includeInputInList
+            filterSelectedOptions
+            value={value}
+            noOptionsText="No countries"
+            onChange={(event, newValue) => setValue(newValue)}
+            onInputChange={debouncedInputChangeHandler}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+          />
           <IconButton sx={{ml : 2}} aria-label='modo' onClick={handleThemeChange}>
             {darkTheme ? <ModeNightIcon /> : <WbSunnyIcon />}
           </IconButton>

@@ -50,4 +50,57 @@ const getCountry = async (code) => {
   return countryData;
 }
 
-export { getCountriesByRegion, getCountry };
+
+const ame = {
+  data: [
+    {
+      name: {
+        official: 'American Samoa'
+      },
+      cca3: 'ASM'
+    },
+    {
+      name: {
+        official: 'United States of America'
+      },
+      cca3: 'USA'
+    },
+    {
+      name: {
+        official: 'Republic of Suriname'
+      },
+      cca3: 'SUR'
+    },    
+    {
+      name: {
+        official: 'Republic of Cameroon'
+      },
+      cca3: 'CMR'
+    },  
+  ]
+}
+
+/**
+ * Get countries that contains part of their name
+ * @param {String} name
+ * @returns
+ */
+const searchCountries = async (name) => {
+  let result = { data: [], success: false };
+
+  try {
+    const response = await client.get(`/name/${name}`);
+    //const response = await new Promise((resolve) => setTimeout(resolve(ame), 1000));
+    result.data = response.data.map(country => ({
+      name: country.name.official,
+      code: country.cca3
+    }));
+    result.success = true;
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  return result;
+}
+
+export { getCountriesByRegion, getCountry, searchCountries };
