@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useContext } from 'react';
+import { useHeader } from '../hooks/useHeader';
+import CountryContext from '../context/CountryContext';
 import { styled, alpha } from '@mui/material/styles';
 import { createUseStyles } from "react-jss";
 import {
@@ -17,10 +19,6 @@ import {
   Search as SearchIcon,
   Menu as MenuIcon
 } from '@mui/icons-material'
-import CountryContext from '../context/CountryContext';
-import { throttle } from '../utils/throttle';
-import { debounce } from '../utils/debounce';
-import * as API from '../api';
 
 const useStyles = createUseStyles({
   root: {
@@ -71,41 +69,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Header() {
-  const { darkTheme, setDarkTheme } = useContext(CountryContext);
+
+  const { darkTheme } = useContext(CountryContext);
   const classes = useStyles()
-  const [ value, setValue ] = useState(null);
-  const [ inputValue, setInputValue] = useState('')
-  const [ open, setOpen ] = useState(false);
-  const [ options, setOptions ] = useState([]);
-  const loading = open && options.length === 0;
-
-  useEffect(() => {
-    const getCountriesByRegion = async () => {
-      const response = await API.searchCountries(inputValue);
-      if (response.success === true) {
-        setOptions(response.data);
-      } else {
-        console.error('Something happened wrong with getCountriesByRegion()')
-      }
-    }
-    if (inputValue != "") 
-      getCountriesByRegion();
-    else
-      setOptions([])
-  }, [inputValue]);
-
-  const inputChangeHandler = (event, newInputValue) => {
-    setInputValue(newInputValue)
-  }
-
-  const debouncedInputChangeHandler = useCallback(
-    debounce(inputChangeHandler, 400)
-  , [])
-
-  const handleThemeChange = () => {
-    setDarkTheme(!darkTheme);
-    localStorage.setItem('darkTheme', !darkTheme);
-  }
+  const { 
+    selectChangeHandler,
+    inputChangeHandler,
+    debouncedInputChangeHandler,
+    handleThemeChange,
+    options,
+    value,
+    loading
+  } = useHeader();
 
   return (
       <AppBar position='static' className={classes.root}>
@@ -130,16 +105,16 @@ export default function Header() {
             sx={{ width: 300 }}
             isOptionEqualToValue={ (option, value) => option.name === value.name }
             getOptionLabel={ (option) => option.name }
-            filterOptions={(x) => x}
-            options={options}
+            filterOptions={ (x) => x }
+            options={ options }
             autoComplete
             includeInputInList
             filterSelectedOptions
             value={value}
             noOptionsText="No countries"
-            onChange={(event, newValue) => setValue(newValue)}
-            onInputChange={debouncedInputChangeHandler}
-            renderInput={(params) => (
+            onChange={ selectChangeHandler }
+            onInputChange={ debouncedInputChangeHandler }
+            renderInput={ (params) => (
               <TextField
                 {...params}
                 label="Search"
@@ -147,16 +122,16 @@ export default function Header() {
                   ...params.InputProps,
                   endAdornment: (
                     <>
-                      {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                      {params.InputProps.endAdornment}
+                      { loading ? <CircularProgress color="inherit" size={20} /> : null }
+                      { params.InputProps.endAdornment }
                     </>
                   ),
                 }}
               />
             )}
           />
-          <IconButton sx={{ml : 2}} aria-label='modo' onClick={handleThemeChange}>
-            {darkTheme ? <ModeNightIcon /> : <WbSunnyIcon />}
+          <IconButton sx={{ml : 2}} aria-label='modo' onClick={ handleThemeChange }>
+            { darkTheme ? <ModeNightIcon /> : <WbSunnyIcon /> }
           </IconButton>
         </Toolbar>
       </AppBar>
